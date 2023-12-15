@@ -24,7 +24,7 @@ function doPost (e) {
     var decode = Utilities.base64Decode(base64, Utilities.Charset.UTF_8)
     var blob = Utilities.newBlob(decode, mimetype, "nama_file." + mimetype.split('/')[1])
     var file = DriveApp.getFolderById(scriptProp.getProperty('folder')).createFile(blob)
-    delete e.parameter.foto_kk
+    e.parameter.foto_kk = file.getUrl()
     
     
     var doc = SpreadsheetApp.openById(scriptProp.getProperty('key'))

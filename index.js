@@ -18,14 +18,20 @@ function doPost (e) {
 
   try {
     // Simpan file
-    var kk = e.parameter.foto_kk
+    const files = Object.keys(e.parameter)?.filter(x => {
+      return /^file/i.test(x)
+    })
+    if(files){
+      for(const x of files){
+    var data = e.parameter[x]
     var base64 = kk.replace(/^data.*;base64,/gim, "")
     var mimetype = kk.match(/(?<=data:).*?(?=;)/gim)?.[0]
     var decode = Utilities.base64Decode(base64, Utilities.Charset.UTF_8)
-    var blob = Utilities.newBlob(decode, mimetype, "nama_file." + mimetype.split('/')[1])
+    var blob = Utilities.newBlob(decode, mimetype, `${x}-${e.parameter.nama}_${Date.now()}.${mimetype.split('/')[1]}`)
     var file = DriveApp.getFolderById(scriptProp.getProperty('folder')).createFile(blob)
-    e.parameter.foto_kk = file.getUrl()
-    
+    e.parameter[x] = file.getUrl()
+      }
+    }
     
     var doc = SpreadsheetApp.openById(scriptProp.getProperty('key'))
     var sheet = doc.getSheetByName(sheetName)
